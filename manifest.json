@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Preamp",
+  "version": "1.0",
+  "description": "Gives valuable information about Prebid impressions in Amp.",
+  "icons": {
+    "48": "icons/border-48.png"
+  },
+  "permissions": [
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://amp.theguardian.com/*"
+      ],
+      "js": [
+        "borderify.js"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
+}
