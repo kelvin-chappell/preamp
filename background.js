@@ -1,30 +1,42 @@
-function logBid(details) {
-    console.log('******************* 1');
-    console.log(details);
+function log(message) {
+    console.log("PREAMP: " + message)
+}
 
+function sendToPage(tabId, message) {
+    log("Sending message to tab " + tabId);
+    console.log(message);
+    const sending = browser.tabs.sendMessage(tabId, message);
+    console.log(sending);
+}
+
+function logBid(details) {
     const filter = browser.webRequest.filterResponseData(details.requestId);
     const decoder = new TextDecoder("utf-8");
 
     filter.ondata = event => {
+        log("Logging bid");
         const str = decoder.decode(event.data, {stream: true});
         filter.disconnect();
-        console.log('********************* 4');
-        console.log(str);
-        console.log('******************* 5');
-        const sending = browser.tabs.sendMessage(details.tabId, str);
-        // const sending =
-        //     browser.tabs.sendMessage(details.tabId, "*** testing 123 ***");
-        console.log(sending);
+        sendToPage(details.tabId, JSON.parse(str));
     };
 
     return {};
 }
 
 function logAdCall(details) {
-    console.log('******************* 2');
-    console.log(details.url);
-    console.log(details.responseHeaders);
-//  browser.tabs.sendMessage()
+    log("Logging ad call");
+    const lineItemId = details.responseHeaders.find(function (header) {
+        return header.name === "google-lineitem-id";
+    }).value;
+    const creativeId = details.responseHeaders.find(function (header) {
+        return header.name === "google-creative-id";
+    }).value;
+    sendToPage(details.tabId, {
+        adDetails: {
+            lineItemId: lineItemId,
+            creativeId: creativeId
+        }
+    })
 }
 
 browser.webRequest.onBeforeRequest.addListener(
@@ -35,6 +47,6 @@ browser.webRequest.onBeforeRequest.addListener(
 
 browser.webRequest.onCompleted.addListener(
     logAdCall,
-    {urls: ["https://securepubads.g.doubleclick.net/*"]},
+    {urls: ["https://securepubads.g.doubleclick.net/gampad/*"]},
     ["responseHeaders"]
 );
