@@ -1,7 +1,6 @@
 function logBid(details) {
     console.log('******************* 1');
     console.log(details);
-//  browser.tabs.sendMessage()
 
     const filter = browser.webRequest.filterResponseData(details.requestId);
     const decoder = new TextDecoder("utf-8");
@@ -11,6 +10,11 @@ function logBid(details) {
         filter.disconnect();
         console.log('********************* 4');
         console.log(str);
+        console.log('******************* 5');
+        const sending = browser.tabs.sendMessage(details.tabId, str);
+        // const sending =
+        //     browser.tabs.sendMessage(details.tabId, "*** testing 123 ***");
+        console.log(sending);
     };
 
     return {};

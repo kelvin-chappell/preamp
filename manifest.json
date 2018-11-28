@@ -17,7 +17,7 @@
         "https://amp.theguardian.com/*"
       ],
       "js": [
-        "borderify.js"
+        "content.js"
       ]
     }
   ],
