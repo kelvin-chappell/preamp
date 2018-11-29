@@ -17,13 +17,13 @@
         "https://amp.theguardian.com/*"
       ],
       "js": [
-        "content.js"
+        "preampContent.js"
       ]
     }
   ],
   "background": {
     "scripts": [
-      "background.js"
+      "preampBackground.js"
     ]
   }
 }
