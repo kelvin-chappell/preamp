@@ -3,6 +3,11 @@ function log(message) {
 }
 
 const zIndex = "5";
+const lineItemLink =
+  "https://admanager.google.com/59666047#delivery/LineItemDetail/lineItemId=";
+const creativeLink =
+  "https://admanager.google.com/59666047#delivery/CreativeDetail/creativeId=";
+
 let detailBoxes = [];
 let targetingIndex = 0;
 let adDetailsIndex = 0;
@@ -52,44 +57,57 @@ function addTitle(title, targetElt) {
   p.textContent = title;
 }
 
-function addProperty(name, value, targetElt) {
+function addPara(text, targetElt) {
   const p = addChildElt("p", targetElt);
   p.style.fontSize = "14px";
-  p.textContent = name + " = " + value;
+  p.textContent = text;
+  return p;
 }
 
-function addBlock(title, json, targetElt) {
-  const div = addChildElt("div", targetElt);
-  div.style.padding = "5px 5px 5px 5px";
-  addTitle(title, div);
+function addProperty(name, value, targetElt) {
+  addPara(name + " = " + value, targetElt);
+}
+
+function addLink(url, label, targetElt) {
+  const link = addChildElt("a", targetElt);
+  link.href = url;
+  link.target = "_blank";
+  link.textContent = label;
+  return link;
+}
+
+function addTargetingBlock(json, targetElt) {
+  const targetingDiv = addChildElt("div", targetElt);
+  targetingDiv.style.padding = "5px 5px 5px 5px";
+  addTitle("Bids:", targetingDiv);
   for (let prop in json) {
     if (json.hasOwnProperty(prop)) {
-      addProperty(prop, json[prop], div);
+      addProperty(prop, json[prop], targetingDiv);
     }
   }
   if (Object.keys(json).length === 0) {
-    const p = addChildElt("p", div);
-    p.style.fontSize = "14px";
-    p.textContent = "No bids";
+    addPara("No bids", targetingDiv);
   }
 }
 
-function addTargeting(json, targetElt) {
-  addBlock("Bids:", json, targetElt);
-}
-
-function addAdDetails(json, targetElt) {
-  addBlock("Ad:", json, targetElt);
+function addAdDetailBlock(json, targetElt) {
+  const adDetailDiv = addChildElt("div", targetElt);
+  adDetailDiv.style.padding = "5px 5px 5px 5px";
+  addTitle("Ad:", adDetailDiv);
+  const lineItemP = addPara("Line item = ", adDetailDiv);
+  addLink(lineItemLink + json.lineItemId, json.lineItemId, lineItemP);
+  const creativeP = addPara("Creative = ", adDetailDiv);
+  addLink(creativeLink + json.creativeId, json.creativeId, creativeP);
 }
 
 function showMessage(message) {
   log("Received message");
   console.log(message);
   if (message.targeting) {
-    addTargeting(message.targeting, detailBoxes[targetingIndex++]);
+    addTargetingBlock(message.targeting, detailBoxes[targetingIndex++]);
   }
   if (message.adDetails) {
-    addAdDetails(message.adDetails, detailBoxes[adDetailsIndex++]);
+    addAdDetailBlock(message.adDetails, detailBoxes[adDetailsIndex++]);
   }
   return true;
 }
