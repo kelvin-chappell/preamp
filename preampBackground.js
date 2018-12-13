@@ -41,12 +41,12 @@ function logAdCall(details) {
 
 browser.webRequest.onBeforeRequest.addListener(
     logBid,
-    {urls: ["https://prebid.adnxs.com/*"]},
+    {urls: ["https://prebid.adnxs.com/pbs/v1/openrtb2/amp?*"]},
     ["blocking"]
 );
 
 browser.webRequest.onCompleted.addListener(
     logAdCall,
-    {urls: ["https://securepubads.g.doubleclick.net/gampad/*"]},
+    {urls: ["https://securepubads.g.doubleclick.net/gampad/ads?*"]},
     ["responseHeaders"]
 );
